@@ -20,7 +20,7 @@ Sc.add(Plane(material = floor,  center = vec3(0, -0.5, -3.0), width = 6.0,height
 
 
 cb = Cuboid( material = green_glass, center = vec3(0.00, 0.0001, -0.8), width = 0.9,height = 1.0, length = 0.4, shadow = False,  max_ray_depth = 5)
-cb.rotate(θ = 30, u = vec3(0,1,0))
+cb.rotate(theta = 30, u = vec3(0,1,0))
 Sc.add(cb)
 
 

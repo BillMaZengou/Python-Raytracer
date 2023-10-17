@@ -22,7 +22,7 @@ class Sphere_Collider(Collider):
     def intersect(self, O, D):
         
         b = 2 * D.dot(O - self.center)
-        c = self.center.square_length() + O.square_length() - 2 * self.center.dot(O) - (self.radius * self.radius)
+        c = self.center.length_squared() + O.length_squared() - 2 * self.center.dot(O) - (self.radius * self.radius)
         disc = (b ** 2) - (4 * c)
         sq = np.sqrt(np.maximum(0, disc))
         h0 = (-b - sq) / 2

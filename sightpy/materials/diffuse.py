@@ -9,20 +9,17 @@ from . import Material
 from ..textures import *
 
 class Diffuse(Material):
-    def __init__(self, diff_color, diffuse_rays = 20, ambient_weight = 0.5, **kwargs):
+    def __init__(self, diff_color, diffuse_rays=20, ambient_weight=0.5, **kwargs):
         super().__init__(**kwargs)
-
         if isinstance(diff_color, vec3):
             self.diff_texture = solid_color(diff_color)
         elif isinstance(diff_color, texture):
             self.diff_texture = diff_color
-
         self.diffuse_rays = diffuse_rays
         self.max_diffuse_reflections = 2
         self.ambient_weight = ambient_weight
 
     def get_color(self, scene, ray, hit):
-        
         hit.point = (ray.origin + ray.dir * hit.distance) # intersection point
         N = hit.material.get_Normal(hit)                  # normal 
 

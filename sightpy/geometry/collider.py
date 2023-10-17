@@ -4,7 +4,7 @@ from ..utils.vector3 import vec3
 from abc import abstractmethod 
 
 class Collider:    
-    def __init__(self,assigned_primitive, center):
+    def __init__(self, assigned_primitive, center):
         self.assigned_primitive = assigned_primitive
         self.center = center
 

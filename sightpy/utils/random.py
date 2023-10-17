@@ -87,7 +87,7 @@ class spherical_caps_pdf(PDF):
     def value(self, ray_dir):
         PDF_value = 0.
         for i in range(self.l):
-            PDF_value +=  np.where( ray_dir.dot(self.ax_w_list[i]) > self.cosθmax_list[i] , 1/((1 - self.cosθmax_list[i])*2*np.pi) , 0. )
+            PDF_value +=  np.where( ray_dir.dot(self.ax_w_list[i]) > self.costhetamax_list[i] , 1/((1 - self.costhetamax_list[i])*2*np.pi) , 0. )
         PDF_value = PDF_value/self.l
         return PDF_value
 
@@ -101,7 +101,7 @@ class spherical_caps_pdf(PDF):
         mask = (np.random.rand(shape) * l).astype(int)
         mask_list = [None]*l
 
-        cosθmax_list = [None]*l
+        costhetamax_list = [None]*l
         ax_u_list = [None]*l
         ax_v_list = [None]*l
         ax_w_list = [None]*l
@@ -117,20 +117,20 @@ class spherical_caps_pdf(PDF):
 
             target_distance = np.sqrt((importance_sampled_list[i].center - origin).dot(importance_sampled_list[i].center - origin))
 
-            cosθmax_list[i] = np.sqrt(1 - np.clip(importance_sampled_list[i].bounded_sphere_radius / target_distance, 0., 1.)**2 )
+            costhetamax_list[i] = np.sqrt(1 - np.clip(importance_sampled_list[i].bounded_sphere_radius / target_distance, 0., 1.)**2 )
 
-        self.cosθmax_list = cosθmax_list
+        self.costhetamax_list = costhetamax_list
         self.ax_w_list = ax_w_list
 
         phi = np.random.rand(shape)*2*np.pi
         r2 =  np.random.rand(shape)
 
-        cosθmax = np.select(mask_list, cosθmax_list)
+        costhetamax = np.select(mask_list, costhetamax_list)
         ax_w =  vec3.select(mask_list, ax_w_list)
         ax_v =  vec3.select(mask_list, ax_v_list)
         ax_u =  vec3.select(mask_list, ax_u_list)
 
-        z = 1. + r2 * (cosθmax - 1.)
+        z = 1. + r2 * (costhetamax - 1.)
         x = np.cos(phi) * np.sqrt(1. - z**2)
         y = np.sin(phi) * np.sqrt(1. - z**2)
 
@@ -170,7 +170,7 @@ def random_in_unit_spherical_caps(shape, origin, importance_sampled_list):
     mask = (np.random.rand(shape) * l).astype(int)
     mask_list = [None]*l
 
-    cosθmax_list = [None]*l
+    costhetamax_list = [None]*l
     ax_u_list = [None]*l
     ax_v_list = [None]*l
     ax_w_list = [None]*l
@@ -186,18 +186,18 @@ def random_in_unit_spherical_caps(shape, origin, importance_sampled_list):
 
         target_distance = np.sqrt((importance_sampled_list[i].center - origin).dot(importance_sampled_list[i].center - origin))
 
-        cosθmax_list[i] = np.sqrt(1 - np.clip(importance_sampled_list[i].bounded_sphere_radius / target_distance, 0., 1.)**2 )
+        costhetamax_list[i] = np.sqrt(1 - np.clip(importance_sampled_list[i].bounded_sphere_radius / target_distance, 0., 1.)**2 )
 
 
     phi = np.random.rand(shape)*2*np.pi
     r2 =  np.random.rand(shape)
 
-    cosθmax = np.select(mask_list, cosθmax_list)
+    costhetamax = np.select(mask_list, costhetamax_list)
     ax_w =  vec3.select(mask_list, ax_w_list)
     ax_v =  vec3.select(mask_list, ax_v_list)
     ax_u =  vec3.select(mask_list, ax_u_list)
 
-    z = 1. + r2 * (cosθmax - 1.)
+    z = 1. + r2 * (costhetamax - 1.)
     x = np.cos(phi) * np.sqrt(1. - z**2)
     y = np.sin(phi) * np.sqrt(1. - z**2)
 
@@ -205,12 +205,12 @@ def random_in_unit_spherical_caps(shape, origin, importance_sampled_list):
 
     PDF = 0.
     for i in range(l):
-        PDF +=  np.where( ray_dir.dot(ax_w_list[i]) > cosθmax_list[i] , 1/((1 - cosθmax_list[i])*2*np.pi) , 0. )
+        PDF +=  np.where( ray_dir.dot(ax_w_list[i]) > costhetamax_list[i] , 1/((1 - costhetamax_list[i])*2*np.pi) , 0. )
     PDF = PDF/l
 
     return ray_dir, PDF
 
-def random_in_unit_spherical_cap(shape,cosθmax,normal):
+def random_in_unit_spherical_cap(shape,costhetamax,normal):
 
 
     ax_w = normal
@@ -221,7 +221,7 @@ def random_in_unit_spherical_cap(shape,cosθmax,normal):
     phi = np.random.rand(shape)*2*np.pi
     r2 =  np.random.rand(shape)
 
-    z = 1. + r2 * (cosθmax - 1.)
+    z = 1. + r2 * (costhetamax - 1.)
     x = np.cos(phi) * np.sqrt(1. - z**2)
     y = np.sin(phi) * np.sqrt(1. - z**2)
 

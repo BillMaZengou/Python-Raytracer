@@ -66,8 +66,8 @@ class Glossy(Material):
             if self.roughness != 0.0:                
                 #Fresnel Factor for specular highlight  (Schlick’s approximation)
                 F0 = np.abs((ray.n - self.n)/(ray.n  + self.n))**2
-                cosθ = np.clip(V.dot(H), 0.0, 1.)
-                F = F0 + (1. - F0)*(1.- cosθ)**5
+                costheta = np.clip(V.dot(H), 0.0, 1.)
+                F = F0 + (1. - F0)*(1.- costheta)**5
 
    
                 # Phong shading (specular highlight)
@@ -83,8 +83,8 @@ class Glossy(Material):
             # Fresnel Factor for reflections  (Schlick’s approximation)
 
             F0 = np.abs((scene.n - self.n)/(scene.n  + self.n))**2
-            cosθ = np.clip(V.dot(N),0.0,1.)
-            F = F0 + (1. - F0)*(1.- cosθ)**5
+            costheta = np.clip(V.dot(N),0.0,1.)
+            F = F0 + (1. - F0)*(1.- costheta)**5
             reflected_ray_dir = (ray.dir - N * 2. * ray.dir.dot(N)).normalize()
             color += (get_raycolor(Ray(nudged, reflected_ray_dir, ray.depth + 1, ray.n, ray.reflections + 1, ray.transmissions, ray.diffuse_reflections), scene))*F
 

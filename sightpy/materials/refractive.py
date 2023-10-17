@@ -9,9 +9,7 @@ from . import Material
 class Refractive(Material):
     def __init__(self, n, **kwargs):
         super().__init__(**kwargs)
-
         self.n = n # index of refraction
-
         # Instead of defining a index of refraction (n) for each wavelenght (computationally expensive) we aproximate defining the index of refraction
         # using a vec3 for red = 630 nm, green 555 nm, blue 475 nm, the most sensitive wavelenghts of human eye.
         
@@ -20,10 +18,7 @@ class Refractive(Material):
         # The imaginary part of n is involved in how much light is reflected and absorbed. For non-transparent materials like metals is usually between (0.1j,3j)
         # and for transparent materials like glass is  usually between (0.j , 1e-7j)
 
-
-
     def get_color(self, scene, ray, hit):
-        
         hit.point = (ray.origin + ray.dir * hit.distance) # intersection point
         N = hit.material.get_Normal(hit)     # normal 
 
@@ -48,13 +43,13 @@ class Refractive(Material):
             n2 = vec3.where(hit.orientation== UPWARDS,self.n,scene.n)
 
             n1_div_n2 =  vec3.real(n1)/vec3.real(n2) 
-            cosθi = V.dot(N)
-            sin2θt = (n1_div_n2)**2 * (1.-cosθi**2)
+            cos_vali = V.dot(N)
+            sin2θt = (n1_div_n2)**2 * (1.-cos_vali**2)
 
             # compute complete fresnel term
-            cosθt = vec3.sqrt(1. - (n1/n2)**2 * (1.-cosθi**2)  )
-            r_per = (n1*cosθi - n2*cosθt)/(n1*cosθi + n2*cosθt)
-            r_par = -1.*(n1*cosθt - n2*cosθi)/(n1*cosθt + n2*cosθi) 
+            cos_valt = vec3.sqrt(1. - (n1/n2)**2 * (1.-cos_vali**2)  )
+            r_per = (n1*cos_vali - n2*cos_valt)/(n1*cos_vali + n2*cos_valt)
+            r_par = -1.*(n1*cos_valt - n2*cos_vali)/(n1*cos_valt + n2*cos_vali) 
             F = (np.abs(r_per)**2 + np.abs(r_par)**2)/2.
             
             # compute reflection
@@ -67,12 +62,12 @@ class Refractive(Material):
             # Spectrum dispersion is not implemented. 
             # We approximate refraction direction averaging index of refraction of each wavelenght
             n1_div_n2_aver = n1_div_n2.average()
-            sin2θt = (n1_div_n2_aver)**2 * (1.-cosθi**2)
+            sin2θt = (n1_div_n2_aver)**2 * (1.-cos_vali**2)
 
             non_TiR = (sin2θt <= 1.)
             if np.any(non_TiR): # avoid total internal reflection
 
-                refracted_ray_dir = (ray.dir*(n1_div_n2_aver) + N*(n1_div_n2_aver * cosθi - np.sqrt(1-np.clip(sin2θt,0,1)))).normalize() 
+                refracted_ray_dir = (ray.dir*(n1_div_n2_aver) + N*(n1_div_n2_aver * cos_vali - np.sqrt(1-np.clip(sin2θt,0,1)))).normalize() 
                 nudged = hit.point - N * .000001  #nudged for refraction
                 T = 1. - F
                 refracted_color = (get_raycolor( Ray(nudged, refracted_ray_dir, ray.depth + 1, n2, ray.reflections, ray.transmissions + 1, ray.diffuse_reflections).extract(non_TiR), scene)  )*T.extract(non_TiR) 

@@ -12,7 +12,7 @@ class ThinFilmInterference(Material):
         super().__init__(**kwargs)
         self.thickness = thickness
 
-        # precomputed reflectance vs cosθI (vertical axis) and thickness (horizontal axis)
+        # precomputed reflectance vs costhetaI (vertical axis) and thickness (horizontal axis)
         self.thin_film_interference_reflectance = load_image("sightpy/textures/thin_film_interference_n=1.4.png")
         self.thickness_noise = load_image("sightpy/textures/noise.png")
         self.thickness_noise = (self.thickness_noise[:,:,0])
@@ -38,15 +38,15 @@ class ThinFilmInterference(Material):
                #ray get out of the material   
             """
 
-            cosθi = V.dot(N)
+            costhetai = V.dot(N)
 
             u,v = hit.get_uv()
             thickness = self.thickness 
             if self.noise_factor != 0.:
                 thickness += self.noise_factor*(self.thickness_noise[-((v * self.thickness_noise.shape[0]*0.5 ).astype(int)% self.thickness_noise.shape[0]) , (u   * self.thickness_noise.shape[1]*0.5).astype(int) % self.thickness_noise.shape[1]  ].T - 0.5)
-                Fim = self.thin_film_interference_reflectance[(cosθi* self.thin_film_interference_reflectance.shape[0]).astype(int),    thickness.astype(int)     ]
+                Fim = self.thin_film_interference_reflectance[(costhetai* self.thin_film_interference_reflectance.shape[0]).astype(int),    thickness.astype(int)     ]
             else:
-                Fim = self.thin_film_interference_reflectance[(cosθi* self.thin_film_interference_reflectance.shape[0]).astype(int),    int(thickness)    ]
+                Fim = self.thin_film_interference_reflectance[(costhetai* self.thin_film_interference_reflectance.shape[0]).astype(int),    int(thickness)    ]
             
             F = vec3(Fim[:,0],Fim[:,1],Fim[:,2])
             # compute reflection

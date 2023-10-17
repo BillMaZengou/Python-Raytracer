@@ -12,18 +12,18 @@ class Surface:
         self.collider_list = [] 
 
         
-    def rotate(self, θ, u):
+    def rotate(self, theta, u):
         
         u = u.normalize()
-        θ = θ/180 *np.pi 
-        cosθ = np.cos(θ)
-        sinθ = np.sqrt(1-cosθ**2) * np.sign(θ)
+        theta = theta/180 *np.pi 
+        costheta = np.cos(theta)
+        sintheta = np.sqrt(1-costheta**2) * np.sign(theta)
         
         #rotation matrix along u axis
         M = np.array([
-                       [cosθ + u.x*u.x * (1-cosθ),      u.x*u.y*(1-cosθ) - u.z*sinθ,         u.x*u.z*(1-cosθ) +u.y*sinθ],
-                       [u.y*u.x*(1-cosθ) + u.z*sinθ,        cosθ + u.y**2 * (1-cosθ),       u.y*u.z*(1-cosθ) -u.x*sinθ],
-                       [u.z*u.x*(1-cosθ) -u.y*sinθ,             u.z*u.y*(1-cosθ) + u.x*sinθ,         cosθ + u.z*u.z*(1-cosθ)]
+                       [costheta + u.x*u.x * (1-costheta),      u.x*u.y*(1-costheta) - u.z*sintheta,         u.x*u.z*(1-costheta) +u.y*sintheta],
+                       [u.y*u.x*(1-costheta) + u.z*sintheta,        costheta + u.y**2 * (1-costheta),       u.y*u.z*(1-costheta) -u.x*sintheta],
+                       [u.z*u.x*(1-costheta) -u.y*sintheta,             u.z*u.y*(1-costheta) + u.x*sintheta,         costheta + u.z*u.z*(1-costheta)]
                       ])
         for c in self.collider_list:
             c.rotate(M, self.center)

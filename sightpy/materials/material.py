@@ -8,12 +8,8 @@ import numpy as np
 from abc import abstractmethod 
 
 class Material():
-    def __init__(self,normalmap = None):
-        
-        if normalmap != None:
-            normalmap = load_image("sightpy/normalmaps/" + normalmap)
-        self.normalmap = normalmap
-
+    def __init__(self, normalmap=None):
+        self.normalmap = load_image("sightpy/normalmaps/" + normalmap) if normalmap is not None else None
 
     def get_Normal(self, hit):
         N_coll = hit.collider.get_Normal(hit)
