@@ -25,7 +25,7 @@ class Material():
         else:
             return N_coll*hit.orientation
 
-    def set_normalmap(self, normalmap,repeat= 1.0):
+    def set_normalmap(self, normalmap,repeat=1.0):
         self.normalmap = load_image("sightpy/normalmaps/" + normalmap)
         self.repeat = repeat
 
