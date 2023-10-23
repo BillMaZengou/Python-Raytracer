@@ -9,15 +9,19 @@ from abc import abstractmethod
 
 class Material():
     def __init__(self, normalmap=None):
-        self.normalmap = load_image("sightpy/normalmaps/" + normalmap) if normalmap is not None else None
+        if normalmap is not None:
+            self.normalmap = load_image("sightpy/normalmaps/" + normalmap)
 
     def get_Normal(self, hit):
         N_coll = hit.collider.get_Normal(hit)
         if self.normalmap is not None:
-            u,v = hit.get_uv()
-            im = self.normalmap[-((v * self.normalmap.shape[0]*self.repeat ).astype(int)% self.normalmap.shape[0]) , (u   * self.normalmap.shape[1]*self.repeat).astype(int) % self.normalmap.shape[1]  ].T
+            u, v = hit.get_uv()
+            im = self.normalmap[
+                -(v * self.normalmap.shape[0]*self.repeat).astype(int) % self.normalmap.shape[0], 
+                (u * self.normalmap.shape[1]*self.repeat).astype(int) % self.normalmap.shape[1]
+            ].T
             N_map = (vec3(im[0] - 0.5,im[1] - 0.5,im[2] - 0.5)) * 2.0 
-            return N_map.matmul(hit.collider.inverse_basis_matrix).normalize()*hit.orientation
+            return N_map.matmul(hit.collider.inverse_basis_matrix).normalize() * hit.orientation
         else:
             return N_coll*hit.orientation
 

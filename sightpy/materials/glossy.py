@@ -15,39 +15,28 @@ class Glossy(Material):
             self.diff_texture = solid_color(diff_color)
         elif isinstance(diff_color, texture):
             self.diff_texture = diff_color
-
         self.roughness = roughness
         self.diff_coeff = diff_coeff
         self.spec_coeff = spec_coeff
         self.n = n # index of refraction
 
-
     def get_color(self, scene, ray, hit):
-
         hit.point = (ray.origin + ray.dir * hit.distance) # intersection point
         N = hit.material.get_Normal(hit)     # normal 
  
-        diff_color = self.diff_texture.get_color(hit)* self.diff_coeff
-
+        diff_color = self.diff_texture.get_color(hit) * self.diff_coeff
         # Ambient
         color = scene.ambient_color * diff_color
-        V = ray.dir*-1. 
+        V = -ray.dir 
         nudged = hit.point + N * .000001                  # M nudged to avoid itself
         
         for light in scene.Light_list:
-
             L = light.get_L()                                         # direction to light
             dist_light = light.get_distance(hit.point)                # distance to light
             NdotL = np.maximum(N.dot(L), 0.)    
             lv = light.get_irradiance(dist_light, NdotL)              # amount of intensity that falls on the surface
-            
-
-                                      # direction to ray origin
-            
+                                                                    # direction to ray origin
             H = (L + V).normalize()                   # Half-way vector
-
-
-            
             
             # Shadow: find if the point is shadowed or not.
             # This amounts to finding out if M can see the light
@@ -61,31 +50,25 @@ class Glossy(Material):
                 seelight = 1.
 
             # Lambert shading (diffuse)
-            color +=  diff_color * lv * seelight 
-            
+            color += diff_color * lv * seelight 
             if self.roughness != 0.0:                
-                #Fresnel Factor for specular highlight  (Schlick’s approximation)
-                F0 = np.abs((ray.n - self.n)/(ray.n  + self.n))**2
-                costheta = np.clip(V.dot(H), 0.0, 1.)
-                F = F0 + (1. - F0)*(1.- costheta)**5
-
+                # Fresnel Factor for specular highlight  (Schlick’s approximation)
+                F0 = np.abs((ray.n - self.n) / (ray.n + self.n))**2
+                costheta = np.clip(V.dot(H), 0., 1.)
+                F = F0 + (1. - F0) * (1. - costheta)**5
    
                 # Phong shading (specular highlight)
-                a = 2./(self.roughness**2.) - 2.
-                Dphong =  np.power(np.clip(N.dot(H), 0., 1.), a) * (a + 2.)/(2.*np.pi)
-                
+                a = 2. / self.roughness**2. - 2.
+                Dphong = np.power(np.clip(N.dot(H), 0., 1.), a) * (a + 2.) / (2. * np.pi)
                 # Cook-Torrance model
-                color +=  F  * Dphong  /(4. * np.clip(N.dot(V) * NdotL, 0.001, 1.) ) * seelight * lv * self.spec_coeff
+                color += F * Dphong / (4. * np.clip(N.dot(V) * NdotL, 0.001, 1.)) * seelight * lv * self.spec_coeff
 
         # Reflection
         if ray.depth < hit.surface.max_ray_depth:
-
             # Fresnel Factor for reflections  (Schlick’s approximation)
-
-            F0 = np.abs((scene.n - self.n)/(scene.n  + self.n))**2
-            costheta = np.clip(V.dot(N),0.0,1.)
-            F = F0 + (1. - F0)*(1.- costheta)**5
+            F0 = np.abs((scene.n - self.n) / (scene.n + self.n))**2
+            costheta = np.clip(V.dot(N), 0., 1.)
+            F = F0 + (1. - F0) * (1. - costheta)**5
             reflected_ray_dir = (ray.dir - N * 2. * ray.dir.dot(N)).normalize()
-            color += (get_raycolor(Ray(nudged, reflected_ray_dir, ray.depth + 1, ray.n, ray.reflections + 1, ray.transmissions, ray.diffuse_reflections), scene))*F
-
+            color += get_raycolor(Ray(nudged, reflected_ray_dir, ray.depth + 1, ray.n, ray.reflections + 1, ray.transmissions, ray.diffuse_reflections), scene) * F
         return color

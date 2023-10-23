@@ -2,7 +2,6 @@ from .utils.constants import SKYBOX_DISTANCE
 import numpy as np
 from abc import abstractmethod 
 
-
 # lights only have effect on Glossy materials
 class Light:
     def __init__(self, pos, color):
@@ -21,24 +20,25 @@ class Light:
     def get_distance(self, M):
         pass
 
-
 class PointLight(Light):
     def __init__(self, pos, color):
         self.pos = pos
         self.color = color
+
     def get_L(self):
-        return (self.pos - M)*(1./(dist_light))
+        return (self.pos - M) / dist_light
 
     def get_distance(self, M):
         return np.sqrt((self.pos - M).dot(self.pos - M))
 
-    def get_irradiance(self,dist_light, NdotL):
+    def get_irradiance(self, dist_light, NdotL):
         return self.color * NdotL/(dist_light**2.) * 100
         
 class DirectionalLight(Light):
     def __init__(self, Ldir, color):
         self.Ldir = Ldir
         self.color = color
+
     def get_L(self):
         return self.Ldir
 

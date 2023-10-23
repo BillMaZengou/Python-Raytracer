@@ -15,7 +15,10 @@ class vec3():
     
     def __str__(self): # Used for debugging. This method is called when you print an instance  
         return "(" + str(self.x) + ", " + str(self.y) + ", " + str(self.z) + ")"
-             
+
+    def __neg__(self):
+        return vec3(-self.x, -self.y, -self.z)
+            
     def __add__(self, v):
         if isinstance(v, vec3):
             return vec3(self.x + v.x, self.y + v.y, self.z + v.z)
