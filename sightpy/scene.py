@@ -11,7 +11,7 @@ from .backgrounds.skybox import SkyBox
 from .backgrounds.panorama import Panorama
 
 class Scene():
-    def __init__(self, ambient_color=rgb(0.01, 0.01, 0.01), n = vec3(1.0, 1.0, 1.0)) :
+    def __init__(self, ambient_color=rgb(0.01, 0.01, 0.01), n=vec3(1.0, 1.0, 1.0)) :
         # n = index of refraction (by default index of refraction of air n = 1.)
         self.scene_primitives = []
         self.collider_list = []
@@ -29,18 +29,16 @@ class Scene():
         self.Light_list += [lights.PointLight(pos, color)]
         
     def add_DirectionalLight(self, Ldir, color):
-        self.Light_list += [lights.DirectionalLight(Ldir.normalize() , color)]  
+        self.Light_list += [lights.DirectionalLight(Ldir.normalize(), color)]  
 
     def add(self, primitive, importance_sampled=False):
-        self.scene_primitives += [primitive]
+        self.scene_primitives.append(primitive)
         self.collider_list += primitive.collider_list
-
         if importance_sampled:
-            self.importance_sampled_list += [primitive]
-
-        if primitive.shadow == True:
+            self.importance_sampled_list.append(primitive)
+        if primitive.shadow:
             self.shadowed_collider_list += primitive.collider_list
-        
+
     def add_Background(self, img, light_intensity=0.0, blur=0.0, spherical=False):
         primitive = Panorama(img, light_intensity=light_intensity, blur=blur) if spherical else SkyBox(img, light_intensity=light_intensity, blur=blur)
         self.scene_primitives += [primitive]        
@@ -62,14 +60,13 @@ class Scene():
                 bar.update(i)
         else:
             for i in range(samples_per_pixel):
-                color_RGBlinear += get_raycolor(self.camera.get_ray(self.n), scene = self)
+                color_RGBlinear += get_raycolor(self.camera.get_ray(self.n), scene=self)
                 
         #average samples per pixel (antialiasing)
         color_RGBlinear = color_RGBlinear / samples_per_pixel
         #gamma correction
         color = cf.sRGB_linear_to_sRGB(color_RGBlinear.to_array())
         print ("Render Took", time.time() - t0)
-
         img_RGB = []
         for c in color:
             # average ray colors that fall in the same pixel. (antialiasing) 

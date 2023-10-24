@@ -32,7 +32,7 @@ class Ray:
 
 class Hit:  
     """Info of the ray-surface intersection"""
-    def __init__(self, distance, orientation, material, collider,surface):
+    def __init__(self, distance, orientation, material, collider, surface):
         self.distance = distance
         self.orientation = orientation 
         self.material = material
@@ -53,21 +53,21 @@ class Hit:
             self.N = self.collider.get_N(self)
         return self.N
 
-
 def get_raycolor(ray, scene):
     inters = [s.intersect(ray.origin, ray.dir) for s in scene.collider_list]
     distances, hit_orientation = zip(*inters)
+    # print(distances, hit_orientation)
     # get the shortest distance collision
     nearest = reduce(np.minimum, distances)
+    # print(nearest)
     color = rgb(0., 0., 0.)
-    
-    for (coll, dis , orient) in zip(scene.collider_list, distances, hit_orientation):
+    for (coll, dis, orient) in zip(scene.collider_list, distances, hit_orientation):
         hit_check = (nearest != FARAWAY) & (dis == nearest)
-
         if np.any(hit_check):  
             material = coll.assigned_primitive.material
-            hit_info = Hit(extract(hit_check,dis) , extract(hit_check,orient), material, coll, coll.assigned_primitive)
-            cc = material.get_color(scene,  ray.extract(hit_check), hit_info)
+            hit_info = Hit(extract(hit_check, dis), extract(hit_check, orient), material, coll, coll.assigned_primitive)
+            cc = material.get_color(scene, ray.extract(hit_check), hit_info)
+            print(cc)
             color += cc.place(hit_check)
     return color
 

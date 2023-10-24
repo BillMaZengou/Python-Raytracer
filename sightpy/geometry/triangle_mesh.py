@@ -3,14 +3,13 @@ from ..utils.constants import *
 from ..utils.vector3 import vec3
 from ..geometry import Primitive, Triangle_Collider
 
-
 # WORK IN PROGRESS. 
 # We need to implement a bounding volume hierarchy to make TriangleMesh collision efficient.
 # Without a bounding volume hierarchy a model with 200 triangles takes around 3 minutes to be rendered
 
 class TriangleMesh(Primitive): 
-    def __init__(self,file_name, center,  material, max_ray_depth,shadow = True):
-        super().__init__(center,  material,max_ray_depth, shadow = shadow)
+    def __init__(self,file_name, center, material, max_ray_depth, shadow=True):
+        super().__init__(center, material, max_ray_depth, shadow)
         self.collider_list += []
         vs = []
         fs = []

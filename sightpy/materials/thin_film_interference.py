@@ -57,7 +57,7 @@ class ThinFilmInterference(Material):
 
             # because the film is very thin (nm) we ignore refraction for transmitted ray.
             transmitted_ray_dir = ray.dir 
-            nudged = hit.point - N * .000001  #nudged for transmitted ray
+            # nudged = hit.point - N * .000001  #nudged for transmitted ray
             T = 1. - F
             transmitted_color = get_raycolor(Ray(nudged, transmitted_ray_dir, ray.depth + 1, ray.n, ray.reflections, ray.transmissions + 1,  ray.diffuse_reflections), scene) * T
             color += transmitted_color

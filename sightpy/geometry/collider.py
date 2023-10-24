@@ -1,6 +1,3 @@
-import numpy as np
-from ..utils.constants import *
-from ..utils.vector3 import vec3
 from abc import abstractmethod 
 
 class Collider:    
