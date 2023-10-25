@@ -32,7 +32,7 @@ class PointLight(Light):
         return np.sqrt((self.pos - M).dot(self.pos - M))
 
     def get_irradiance(self, dist_light, NdotL):
-        return self.color * NdotL/(dist_light**2.) * 100
+        return self.color * NdotL / dist_light**2. * 100
         
 class DirectionalLight(Light):
     def __init__(self, Ldir, color):
